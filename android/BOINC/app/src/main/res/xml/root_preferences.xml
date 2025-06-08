@@ -282,6 +282,44 @@
 
     <PreferenceCategory
             app:iconSpaceReserved="false"
+            app:key="remote_server"
+            app:title="@string/prefs_category_remote_server">
+
+        <CheckBoxPreference
+                app:defaultValue="@bool/prefs_default_remote_server"
+                app:iconSpaceReserved="false"
+                app:key="controlRemote"
+                app:summary="@string/prefs_remote_server_summary"
+                app:title="@string/prefs_remote_server_header" />
+
+        <EditTextPreference
+                android:inputType="text"
+                app:defaultValue=""
+                app:iconSpaceReserved="false"
+                app:key="remoteHost"
+                app:title="@string/prefs_remote_server_host"
+                app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+                android:inputType="number"
+                app:defaultValue="31416"
+                app:iconSpaceReserved="false"
+                app:key="remotePort"
+                app:title="@string/prefs_remote_server_port"
+                app:useSimpleSummaryProvider="true" />
+
+        <EditTextPreference
+                android:inputType="textPassword"
+                app:defaultValue=""
+                app:iconSpaceReserved="false"
+                app:key="remotePassword"
+                app:title="@string/prefs_remote_server_password"
+                app:summary="********" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+            app:iconSpaceReserved="false"
             app:key="debug"
             app:title="@string/prefs_category_debug">
 

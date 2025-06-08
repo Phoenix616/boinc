@@ -58,6 +58,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     private val charPool : List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
     private val passwordLength = 32
     private var authKey = ""
+    private var authenticationKey = ""
     private lateinit var biometricPrompt: BiometricPrompt
     private lateinit var authenticationPopupView: View
     private lateinit var authenticationPopupEditText: EditText
@@ -284,6 +285,22 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 writeClientPrefs(prefs)
             }
 
+            // Connect to remote
+            "remoteHost",
+            "remotePort",
+            "remotePassword" -> {
+                quitClient()
+            }
+
+            "controlRemote" -> {
+                val isControllingRemote = sharedPreferences.getBoolean(key, false)
+                BOINCActivity.monitor!!.isControllingRemote = isControllingRemote
+                findPreference<Preference>("remoteHost")?.isVisible = isControllingRemote
+                findPreference<Preference>("remotePort")?.isVisible = isControllingRemote
+                findPreference<Preference>("remotePassword")?.isVisible = isControllingRemote
+                quitClient()
+            }
+
             // Remote
             "authenticationKey" -> {
                 val currentAuthKey = sharedPreferences.getString(key, "")!!
@@ -352,6 +369,11 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         findPreference<PreferenceCategory>("remote")?.isVisible = showAdvanced
         val isRemote = findPreference<CheckBoxPreference>("remoteEnable")?.isChecked
         findPreference<Preference>("authenticationKey")?.isVisible = showAdvanced && isRemote == true
+        findPreference<PreferenceCategory>("remote_server")?.isVisible = showAdvanced
+        val isControllingRemote = findPreference<CheckBoxPreference>("controlRemote")?.isChecked
+        findPreference<Preference>("remoteHost")?.isVisible = showAdvanced && isControllingRemote == true
+        findPreference<Preference>("remotePort")?.isVisible = showAdvanced && isControllingRemote == true
+        findPreference<Preference>("remotePassword")?.isVisible = showAdvanced && isControllingRemote == true
     }
 
     private fun writeClientPrefs(prefs: GlobalPreferences) {

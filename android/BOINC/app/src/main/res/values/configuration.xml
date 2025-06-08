@@ -42,9 +42,14 @@
     <!-- Default preferences of Android app-->
     <bool name="prefs_default_autostart">true</bool>
     <bool name="prefs_default_remote">false</bool>
+    <bool name="prefs_default_remote_server">false</bool>
     <bool name="prefs_default_notification_notices">true</bool>
     <bool name="prefs_default_notification_suspended">false</bool>
     <bool name="prefs_default_advanced">false</bool>
+    <bool name="prefs_control_remote">false</bool>
+    <string name="prefs_remote_host"></string>
+    <integer name="prefs_remote_port">31416</integer>
+    <string name="prefs_remote_password"></string>
     <integer name="prefs_default_loglevel">2</integer>
     <bool name="prefs_power_source_ac">true</bool>
     <bool name="prefs_power_source_usb">true</bool>

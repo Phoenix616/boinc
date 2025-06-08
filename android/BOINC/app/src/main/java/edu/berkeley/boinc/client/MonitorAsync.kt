@@ -299,6 +299,10 @@ class MonitorAsync(monitor: IMonitor?) : IMonitor {
         return monitor.isRemote
     }
 
+    override fun getIsControllingRemote(): Boolean {
+        return monitor.isControllingRemote
+    }
+
     override fun getAutostart(): Boolean {
         return monitor.autostart
     }
@@ -357,6 +361,10 @@ class MonitorAsync(monitor: IMonitor?) : IMonitor {
 
     override fun setIsRemote(isRemote: Boolean) {
         monitor.isRemote = isRemote
+    }
+
+    override fun setIsControllingRemote(isRemote: Boolean) {
+        monitor.isControllingRemote = isRemote
     }
 
     override fun setStationaryDeviceMode(mode: Boolean) {

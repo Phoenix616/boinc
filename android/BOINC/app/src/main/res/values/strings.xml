@@ -128,6 +128,7 @@
     <string name="prefs_category_other">Other</string>
     <string name="prefs_category_debug">Debug</string>
     <string name="prefs_category_remote">Remote Control</string>
+    <string name="prefs_category_remote_server">Remote Server</string>
     <string name="prefs_show_advanced_header">Show advanced preferences and controls</string>
     <string name="prefs_suspend_when_screen_on">Pause computation when screen is on</string>
     <string name="prefs_general_device_name_header">Device name</string>
@@ -150,6 +151,8 @@
     <string name="prefs_autostart_header">Autostart</string>
     <string name="prefs_remote_header">Enable Remote Control</string>
     <string name="prefs_remote_summary">When changed, the BOINC client will be relaunched.</string>
+    <string name="prefs_remote_server_header">Connect to remote server</string>
+    <string name="prefs_remote_server_summary">When changed, the BOINC client will be relaunched.</string>
     <string name="prefs_show_notification_notices_header">Show notification for new notices</string>
     <string name="prefs_show_notification_suspended_header">Show notification when suspended</string>
     <string name="prefs_cpu_number_cpus_header">Used CPU cores</string>
@@ -165,6 +168,9 @@
     <string name="prefs_remote_authentication_key_input_hint">Authentication Key</string>
     <string name="prefs_remote_empty_password">Password update failed: value cannot be empty</string>
     <string name="prefs_remote_boinc_relaunched">The BOINC client will be relaunched after password change.</string>
+    <string name="prefs_remote_server_host">Host</string>
+    <string name="prefs_remote_server_port">Port</string>
+    <string name="prefs_remote_server_password">Password</string>
     <string name="prefs_client_log_flags_header">BOINC client log flags</string>
     <string name="prefs_gui_log_categories">BOINC GUI log categories</string>
     <string name="prefs_gui_log_level_header">GUI log level</string>

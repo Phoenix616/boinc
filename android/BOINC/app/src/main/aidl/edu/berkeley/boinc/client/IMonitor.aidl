@@ -101,6 +101,7 @@ void setShowNotificationForNotices(in boolean isShow);   // Monitor.getAppPrefs(
 void setShowNotificationDuringSuspend(in boolean isShow);   // Monitor.getAppPrefs().setShowNotificationDuringSuspend(boolean);
 boolean getShowAdvanced();           // Monitor.getAppPrefs().getShowAdvanced();
 boolean getIsRemote();              // Monitor.getAppPrefs().getIsRemote();
+boolean getIsControllingRemote();    // Monitor.getAppPrefs().getIsControllingRemote();
 boolean getAutostart();              // Monitor.getAppPrefs().getAutostart();
 boolean getShowNotificationForNotices();       // Monitor.getAppPrefs().getShowNotificationForNotices();
 boolean getShowNotificationDuringSuspend();       // Monitor.getAppPrefs().getShowNotificationDuringSuspend();
@@ -117,6 +118,7 @@ boolean getPowerSourceUsb();
 boolean getPowerSourceWireless();
 void setShowAdvanced(in boolean isShow);
 void setIsRemote(in boolean isRemote);
+void setIsControllingRemote(in boolean isRemote);
 void setStationaryDeviceMode(in boolean mode);
 boolean getSuspendWhenScreenOn();
 void setSuspendWhenScreenOn(in boolean swso);

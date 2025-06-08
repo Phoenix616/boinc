@@ -35,6 +35,10 @@ class AppPreferences @Inject constructor(val context: Context) {
     var showNotificationDuringSuspend = prefs.getBoolean("showNotificationsDuringSuspend",
             context.resources.getBoolean(R.bool.prefs_default_notification_suspended))
     var showAdvanced = prefs.getBoolean("showAdvanced", context.resources.getBoolean(R.bool.prefs_default_advanced))
+    var controlRemote = prefs.getBoolean("controlRemote", context.resources.getBoolean(R.bool.prefs_control_remote))
+    var remoteHost = prefs.getString("remoteHost", context.resources.getString(R.string.prefs_remote_host))
+    var remotePort = prefs.getInt("remotePort", context.resources.getInteger(R.integer.prefs_remote_port))
+    var remotePassword = prefs.getString("remotePassword", context.resources.getString(R.string.prefs_remote_password))
     var isRemote     = prefs.getBoolean("remoteEnable", context.resources.getBoolean(R.bool.prefs_default_remote))
     var logLevel = prefs.getInt("logLevel", context.resources.getInteger(R.integer.prefs_default_loglevel))
         set(value) {
