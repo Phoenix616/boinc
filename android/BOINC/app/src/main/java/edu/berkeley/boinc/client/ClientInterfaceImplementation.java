@@ -53,6 +53,16 @@ public class ClientInterfaceImplementation extends RpcClient {
     }
 
     /**
+     * Authenticates GUI for advanced RPCs with the client via a given password.
+     *
+     * @param password The password to authenticate the GUI.
+     * @return success
+     */
+    public Boolean authorizeGui(String password) {
+        return authorize(password);
+    }
+
+    /**
      * Sets run mode of BOINC client
      *
      * @param mode see class BOINCDefs

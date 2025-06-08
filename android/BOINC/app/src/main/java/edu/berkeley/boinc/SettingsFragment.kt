@@ -58,6 +58,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     private val charPool : List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
     private val passwordLength = 32
     private var authKey = ""
+    private var authenticationKey = ""
     private lateinit var biometricPrompt: BiometricPrompt
     private lateinit var authenticationPopupView: View
     private lateinit var authenticationPopupEditText: EditText
@@ -282,6 +283,22 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             "workBufAdditionalDays" -> {
                 prefs.workBufAdditionalDays = sharedPreferences.getString(key, "0.5")?.toDouble() ?: 0.5
                 writeClientPrefs(prefs)
+            }
+
+            // Connect to remote
+            "remoteHost",
+            "remotePort",
+            "remotePassword" -> {
+                quitClient()
+            }
+
+            "controlRemote" -> {
+                val isControllingRemote = sharedPreferences.getBoolean(key, false)
+                BOINCActivity.monitor!!.isControllingRemote = isControllingRemote
+                findPreference<Preference>("remoteHost")?.isVisible = isControllingRemote
+                findPreference<Preference>("remotePort")?.isVisible = isControllingRemote
+                findPreference<Preference>("remotePassword")?.isVisible = isControllingRemote
+                quitClient()
             }
 
             // Remote

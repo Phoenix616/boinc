@@ -110,6 +110,7 @@ class Monitor : LifecycleService() {
     private val forceReinstall = false // for debugging purposes //TODO
 
     private var isRemote = false
+    private var isControllingRemote = false
 
     /**
      * Determines BOINC platform name corresponding to device's cpu architecture (ARM, x86).
@@ -475,64 +476,67 @@ class Monitor : LifecycleService() {
     private fun clientSetup(): Boolean {
         Logging.logVerbose(Logging.Category.MONITOR, "Monitor.clientSetup()")
 
-        clientStatus.setSetupStatus(ClientStatus.SETUP_STATUS_LAUNCHING, true)
-        val clientProcessName = boincWorkingDir + fileNameClient
-        val md5AssetClient = computeMd5(fileNameClient, true)
-        val md5InstalledClient = computeMd5(clientProcessName, false)
+        isControllingRemote = appPreferences.controlRemote
+        if (!isControllingRemote) {
+            clientStatus.setSetupStatus(ClientStatus.SETUP_STATUS_LAUNCHING, true)
+            val clientProcessName = boincWorkingDir + fileNameClient
+            val md5AssetClient = computeMd5(fileNameClient, true)
+            val md5InstalledClient = computeMd5(clientProcessName, false)
 
-        // If client hashes do not match, we need to install the one that is a part
-        // of the package. Shutdown the currently running client if needed.
-        //
-        if (forceReinstall || md5InstalledClient != md5AssetClient) {
-            Logging.logDebug(
-                Logging.Category.MONITOR,
-                "Hashes of installed client does not match binary in assets - re-install."
-            )
+            // If client hashes do not match, we need to install the one that is a part
+            // of the package. Shutdown the currently running client if needed.
+            //
+            if (forceReinstall || md5InstalledClient != md5AssetClient) {
+                Logging.logDebug(
+                    Logging.Category.MONITOR,
+                    "Hashes of installed client does not match binary in assets - re-install."
+                )
 
-            // try graceful shutdown using RPC (faster)
-            if (getPidForProcessName(clientProcessName) != null && connectClient()) {
-                clientInterface.quit()
-                val attempts =
-                    applicationContext.resources.getInteger(R.integer.shutdown_graceful_rpc_check_attempts)
-                val sleepPeriod =
-                    applicationContext.resources.getInteger(R.integer.shutdown_graceful_rpc_check_rate_ms)
-                var x = 0
-                while (x < attempts) {
-                    Thread.sleep(sleepPeriod.toLong())
-                    if (getPidForProcessName(clientProcessName) == null) { //client is now closed
-                        Logging.logDebug(
-                            Logging.Category.MONITOR,
-                            "quitClient: graceful RPC shutdown successful after " + x +
-                                    " seconds"
-                        )
+                // try graceful shutdown using RPC (faster)
+                if (getPidForProcessName(clientProcessName) != null && connectClient()) {
+                    clientInterface.quit()
+                    val attempts =
+                        applicationContext.resources.getInteger(R.integer.shutdown_graceful_rpc_check_attempts)
+                    val sleepPeriod =
+                        applicationContext.resources.getInteger(R.integer.shutdown_graceful_rpc_check_rate_ms)
+                    var x = 0
+                    while (x < attempts) {
+                        Thread.sleep(sleepPeriod.toLong())
+                        if (getPidForProcessName(clientProcessName) == null) { //client is now closed
+                            Logging.logDebug(
+                                Logging.Category.MONITOR,
+                                "quitClient: graceful RPC shutdown successful after " + x +
+                                        " seconds"
+                            )
 
-                        x = attempts
+                            x = attempts
+                        }
+                        x++
                     }
-                    x++
+                }
+
+                // quit with OS signals
+                if (getPidForProcessName(clientProcessName) != null) {
+                    quitProcessOsLevel(clientProcessName)
+                }
+
+                // at this point client is definitely not running. install new binary...
+                if (!installClient()) {
+                    Logging.logError(Logging.Category.MONITOR, "BOINC client installation failed!")
+                    return false
                 }
             }
 
-            // quit with OS signals
-            if (getPidForProcessName(clientProcessName) != null) {
-                quitProcessOsLevel(clientProcessName)
-            }
+            // Start the BOINC client if we need to.
+            val clientPid = getPidForProcessName(clientProcessName)
+            if (clientPid == null) {
+                Logging.logInfo(Logging.Category.MONITOR, "Starting the BOINC client")
 
-            // at this point client is definitely not running. install new binary...
-            if (!installClient()) {
-                Logging.logError(Logging.Category.MONITOR, "BOINC client installation failed!")
-                return false
-            }
-        }
+                if (!runClient(appPreferences.isRemote)) {
+                    Logging.logError(Logging.Category.MONITOR, "BOINC client failed to start")
 
-        // Start the BOINC client if we need to.
-        val clientPid = getPidForProcessName(clientProcessName)
-        if (clientPid == null) {
-            Logging.logInfo(Logging.Category.MONITOR, "Starting the BOINC client")
-
-            if (!runClient(appPreferences.isRemote)) {
-                Logging.logError(Logging.Category.MONITOR, "BOINC client failed to start")
-
-                return false
+                    return false
+                }
             }
         }
 
@@ -628,7 +632,9 @@ class Monitor : LifecycleService() {
      * @return Boolean success
      */
     private fun connectClient(): Boolean {
-        var success = if (isRemote) {
+        var success = if (isControllingRemote) {
+            clientInterface.open(appPreferences.remoteHost, appPreferences.remotePort)
+        } else if (isRemote) {
             clientInterface.connect()
         } else {
             clientInterface.open(clientSocketAddress)
@@ -640,7 +646,11 @@ class Monitor : LifecycleService() {
         }
 
         //authorize
-        success = clientInterface.authorizeGuiFromFile(boincWorkingDir + fileNameGuiAuthentication)
+        success = if (isControllingRemote) {
+            clientInterface.authorizeGui(appPreferences.remotePassword)
+        } else {
+            clientInterface.authorizeGuiFromFile(boincWorkingDir + fileNameGuiAuthentication)
+        }
         if (!success) {
             Logging.logError(Logging.Category.MONITOR, "Authorization failed!")
         }
